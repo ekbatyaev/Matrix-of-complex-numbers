@@ -42,12 +42,11 @@ public class Matrix
         if (matrix_1.m == matrix_2.n) {return 1;}
         else {return 0;}
     }
-    public void summ_matrix(Matrix matrix_1, Matrix matrix_2)
+    public Matrix summ_matrix(Matrix matrix_1, Matrix matrix_2)
     {
-
+        Matrix matrix_summ = new Matrix(matrix_1.n, matrix_2.m);
         if (check_compatibility(matrix_1, matrix_2) == 2)
         {
-            Matrix matrix_summ = new Matrix(matrix_1.n, matrix_2.m);
             for (int i = 0; i < n; i++)
             {
                 for (int j = 0; j < m; j++)
@@ -55,21 +54,18 @@ public class Matrix
                     matrix_summ.chisla[i][j].addition(matrix_1.chisla[i][j], matrix_2.chisla[i][j]);
                 }
             }
-            matrix_1.print_matrix();
-            System.out.println("  +  ");
-            matrix_2.print_matrix();
-            System.out.println("  =  ");
-            matrix_summ.print_matrix();
 
         }
         else{System.out.println("Матрицы не совместимы");}
+        return matrix_summ;
     }
 
-    public void substract_matrix(Matrix matrix_1, Matrix matrix_2)
+    public Matrix substract_matrix(Matrix matrix_1, Matrix matrix_2)
     {
+        Matrix matrix_sub = new Matrix(matrix_1.n, matrix_2.m);
         if  (check_compatibility(matrix_1, matrix_2) == 2)
         {
-            Matrix matrix_sub = new Matrix(matrix_1.n, matrix_2.m);
+
             for (int i = 0; i < n; i++)
             {
                 for (int j = 0; j < m; j++)
@@ -77,14 +73,10 @@ public class Matrix
                     matrix_sub.chisla[i][j].subtraction(matrix_1.chisla[i][j], matrix_2.chisla[i][j]);
                 }
             }
-            matrix_1.print_matrix();
-            System.out.println("  -  ");
-            matrix_2.print_matrix();
-            System.out.println("  =  ");
-            matrix_sub.print_matrix();
 
         }
         else{System.out.println("Матрицы не совместимы");}
+        return matrix_sub;
     }
 
     public void multiplication_matrix(Matrix matrix_1, Matrix matrix_2)
@@ -127,58 +119,51 @@ public class Matrix
         }
         return result_transp_matrix;
     }
-    public void determinant()
-    {
-        Numbers deter_num_res= new Numbers(0, 0);
-        Numbers mult = new Numbers(1, 0);
-        if ((this.n == this.m) && (this.n == 1))
-        {
-            System.out.print("Детерминант равен " );
-            this.chisla[0][0].print_number();
-            System.out.println();
-        }
-        else if ((this.n == this.m) && (this.n == 2))
-        {
-            mult.multiplication(this.chisla[0][0],this.chisla[1][1]);
-            deter_num_res.addition(deter_num_res, mult);
-            mult.multiplication(this.chisla[1][0],this.chisla[0][1]);
-            deter_num_res.subtraction(deter_num_res, mult);
-            System.out.print("Детерминант равен ");
-            deter_num_res.print_number();
-            System.out.println();
-        }
-        else if ((this.n == this.m) && (this.n > 2))
-        {
-            for (int start = 0; start < this.n; start++)
-            {
-                int ind_i = 0, ind_j = start;
-                while (ind_i < this.n)
-                {
-                    mult.multiplication(mult, this.chisla[(ind_i % n)][(ind_j % m)]);
-                    ind_i++;
-                    ind_j++;
-                }
-                deter_num_res.addition(deter_num_res, mult);
-                mult.setter(1, 0);
-            }
-            mult.setter(1, 0);
-            for (int start = 0; start < this.n; start++)
-            {
-                int ind_i = this.n - 1, ind_j = start;
-                while (ind_i >= 0)
-                {
-                    mult.multiplication(mult, this.chisla[(ind_i % n)][(ind_j % m)]);
-                    ind_i--;
-                    ind_j++;
-                }
-                deter_num_res.subtraction(deter_num_res, mult);
-                mult.setter(1, 0);
 
-            }
-            System.out.print("Детерминант равен ");
-            deter_num_res.print_number();
-            System.out.println();
+public void determinant() {
+    if (n != m) {
+        System.out.println("Матрица не квадратная, детерминант не определен");
+        return;
+    }
+    Numbers deter_num_res = calculate_determinant(this);
+    System.out.print("Детерминант равен ");
+    deter_num_res.print_number();
+    System.out.println();
+}
+
+    private Numbers calculate_determinant(Matrix matrix) {
+        int dimension = matrix.n;
+        if (dimension == 1) {
+            return matrix.chisla[0][0];
+        } else if (dimension == 2) {
+            Numbers result = new Numbers(0, 0);
+            Numbers temp1 = new Numbers(0, 0), temp2 = new Numbers(0, 0);
+            temp1.multiplication(matrix.chisla[0][0], matrix.chisla[1][1]);
+            temp2.multiplication(matrix.chisla[0][1], matrix.chisla[1][0]);
+            result.addition(result, temp1);
+            result.subtraction(result, temp2);
+            return result;
         }
-        else{System.out.println("Кол-во строк не равно кол-ву стобцов");}
+
+        Numbers deter_num_res = new Numbers(0, 0);
+        for (int i = 0; i < dimension; i++) {
+            Matrix sub_matrix = new Matrix(dimension - 1, dimension - 1);
+            for (int line = 1; line < dimension; line++) {
+                int colIndex = 0;
+                for (int col = 0; col < dimension; col++) {
+                    if (col == i) continue;
+                    sub_matrix.chisla[line - 1][colIndex++] = matrix.chisla[line][col];
+                }
+            }
+            Numbers subDet = calculate_determinant(sub_matrix);
+            if (i % 2 == 0) {
+                subDet.multiplication(matrix.chisla[0][i], subDet);
+                deter_num_res.addition(deter_num_res, subDet);
+            } else {
+                subDet.multiplication(matrix.chisla[0][i], subDet);
+                deter_num_res.subtraction(deter_num_res, subDet);
+            }
+        }
+        return deter_num_res;
     }
 }

@@ -1,14 +1,14 @@
-//TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
-// click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
+
 public class Main
 {
     public static void main(String[] args)
     {
         //Вносим размерности матриц сложения, вычитания и для вычисления детерминанта
-        int n_1 = 3, m_1 = 3, n_2 = 3, m_2 = 3;
+        int n_1 = 3, m_1 = 3, n_2 = 3, m_2 = 3, n_sub = 4, m_sub = 4;
         Matrix matrix_one = new Matrix(n_1, m_1);
         Matrix matrix_two = new Matrix(n_2, m_2);
-        //Пишем значение для первой и второй матрицы
+        Matrix matrix_three = new Matrix(n_sub, m_sub);
+        //Пишем значение для первой, второй и третьей матрицы
         Numbers [][] matrix_1_elem = {{new Numbers(1, -2), new Numbers(3, 1), new Numbers(2, -1)},
                 {new Numbers(2, 0), new Numbers(4, -3), new Numbers(0, 0)},
                 {new Numbers(-3, 0), new Numbers(1, 0), new Numbers(1, 1)}};
@@ -16,7 +16,17 @@ public class Main
         Numbers [][] matrix_2_elem = {{new Numbers(11, 0), new Numbers(0, 1), new Numbers(1, 1)},
                 {new Numbers(0, -1), new Numbers(-2, 0), new Numbers(0, 3)},
                 {new Numbers(1, -1), new Numbers(0, -3), new Numbers(1, 0)}};
-        //Присваиваем эти значения первой и второй матрице
+
+//        Numbers [][] matrix_3_elem = {{new Numbers(1, 0), new Numbers(2, 0), new Numbers(3, 0), new Numbers(4, 0), new Numbers(5, 0)},
+//                {new Numbers(-1, 0), new Numbers(0, 0), new Numbers(2, 0), new Numbers(5, 0), new Numbers(3, 0)},
+//                {new Numbers(1, 0), new Numbers(2, 0), new Numbers(2, 0), new Numbers(4, 0), new Numbers(6, 0)},
+//                {new Numbers(-3, 0), new Numbers(1, 0), new Numbers(-2, 0), new Numbers(4, 0), new Numbers(3, 0)},
+//                {new Numbers(1, 0), new Numbers(2, 0), new Numbers(6, 0), new Numbers(7, 0), new Numbers(-8, 0)}};
+        Numbers [][] matrix_3_elem = {{new Numbers(1, 0), new Numbers(3, 0), new Numbers(2, 0), new Numbers(2, 0)},
+                {new Numbers(2, 0), new Numbers(4, 0), new Numbers(0, 0), new Numbers(2, 0)},
+                {new Numbers(-3, 0), new Numbers(1, 0), new Numbers(1, 0), new Numbers(2, 0)},
+                {new Numbers(-3, 0), new Numbers(1, 0), new Numbers(1, 0), new Numbers(2, 0)}};
+        //Присваиваем эти значения первой, второй и третьей матрице
         for (int i = 0; i < n_1; i++)
         {
             for (int j = 0; j < m_1; j++)
@@ -33,6 +43,14 @@ public class Main
             }
         }
 
+        for (int i = 0; i < n_sub; i++)
+        {
+            for (int j = 0; j < m_sub; j++)
+            {
+                matrix_three.add_elem(matrix_3_elem[i][j], i, j);
+            }
+        }
+
         //Выводим матрицы и их значение детерминанта
         System.out.println("Матрица: ");
         matrix_one.print_matrix();
@@ -44,13 +62,30 @@ public class Main
         matrix_two.determinant();
         System.out.println();
 
-        //Сумма и разность матриц
-        System.out.println("Сумма матриц: ");
-        matrix_one.summ_matrix(matrix_one, matrix_two);
+        System.out.println("Матрица: ");
+        matrix_three.print_matrix();
+        matrix_three.determinant();
         System.out.println();
 
+        //Сумма и разность матриц
+        Matrix summ_result = new Matrix(n_1, m_1);
+        System.out.println("Сумма матриц: ");
+        summ_result = summ_result.summ_matrix(matrix_one, matrix_two);
+        matrix_one.print_matrix();
+        System.out.println("  +  ");
+        matrix_two.print_matrix();
+        System.out.println("  =  ");
+        summ_result.print_matrix();
+        System.out.println();
+
+        Matrix subtract_result = new Matrix(n_2, m_2);
         System.out.println("Разность матриц: ");
-        matrix_one.substract_matrix(matrix_one, matrix_two);
+        subtract_result = subtract_result.substract_matrix(matrix_one, matrix_two);
+        matrix_one.print_matrix();
+        System.out.println("  -  ");
+        matrix_two.print_matrix();
+        System.out.println("  =  ");
+        subtract_result.print_matrix();
         System.out.println();
 
         //Создание матриц для произведения
